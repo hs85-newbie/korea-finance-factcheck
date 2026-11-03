@@ -1,0 +1,26 @@
+name: Publish to PyPI
+
+# 태그(v*)를 올리면 테스트 → 빌드 → PyPI 배포. 토큰 없이 PyPI 신뢰 배포(OIDC)를 쓴다.
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv && uv pip install -e ".[test]" && .venv/bin/python -m pytest -q
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv build
+      - uses: pypa/gh-action-pypi-publish@release/v1
