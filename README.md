@@ -1,5 +1,7 @@
 # korea-finance-factcheck
 
+<!-- mcp-name: io.github.hs85-newbie/korea-finance-factcheck -->
+
 한국 금융 글에 적힌 숫자를 공식 원본과 맞춰 보는 MCP 서버입니다. 글을 쓰는 사람이 Claude에게 "이 글 숫자 맞는지 봐 줘"라고 하면, 서버가 DART 공시와 한국은행 ECOS, 미국 재무부 자료를 직접 불러와 틀린 곳을 짚습니다.
 
 ## 왜 만들었나

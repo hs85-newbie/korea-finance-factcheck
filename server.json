@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.hs85-newbie/korea-finance-factcheck",
+  "title": "Korea Finance Factcheck",
+  "description": "Fact-checks numbers in Korean finance writing against DART, Bank of Korea ECOS and US Treasury",
+  "repository": {
+    "url": "https://github.com/hs85-newbie/korea-finance-factcheck",
+    "source": "github"
+  },
+  "version": "0.1.1",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "korea-finance-factcheck",
+      "version": "0.1.1",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "DART_API_KEY", "description": "OpenDART API key (ratio direction and unit checks)", "isRequired": false, "isSecret": true },
+        { "name": "ECOS_API_KEY", "description": "Bank of Korea ECOS API key (KOSPI close, base rate, KRW/USD checks)", "isRequired": false, "isSecret": true }
+      ]
+    }
+  ]
+}

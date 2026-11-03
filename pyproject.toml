@@ -1,6 +1,6 @@
 [project]
 name = "korea-finance-factcheck"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server that checks numbers in Korean finance writing against DART, Bank of Korea ECOS and US Treasury data"
 readme = "README.md"
 license = "MIT"
