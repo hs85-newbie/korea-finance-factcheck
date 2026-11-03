@@ -7,16 +7,34 @@
     "url": "https://github.com/hs85-newbie/korea-finance-factcheck",
     "source": "github"
   },
-  "version": "0.1.1",
+  "version": "0.2.0",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "korea-finance-factcheck",
-      "version": "0.1.1",
-      "transport": { "type": "stdio" },
+      "version": "0.2.0",
+      "transport": {
+        "type": "stdio"
+      },
       "environmentVariables": [
-        { "name": "DART_API_KEY", "description": "OpenDART API key (ratio direction and unit checks)", "isRequired": false, "isSecret": true },
-        { "name": "ECOS_API_KEY", "description": "Bank of Korea ECOS API key (KOSPI close, base rate, KRW/USD checks)", "isRequired": false, "isSecret": true }
+        {
+          "name": "DART_API_KEY",
+          "description": "OpenDART API key (ratio direction and unit checks)",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "ECOS_API_KEY",
+          "description": "Bank of Korea ECOS API key (KOSPI close, base rate, KRW/USD checks)",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "KRX_API_KEY",
+          "description": "KRX Open API key (stock close checks; non-commercial use only)",
+          "isRequired": false,
+          "isSecret": true
+        }
       ]
     }
   ]

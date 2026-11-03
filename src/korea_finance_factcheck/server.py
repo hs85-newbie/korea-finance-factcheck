@@ -6,7 +6,7 @@ from typing import Optional
 
 from mcp.server.mcpserver import MCPServer
 
-from . import __version__, market, ratio, units
+from . import __version__, krx, market, ratio, units
 
 mcp = MCPServer("korea-finance-factcheck", version=__version__)
 
@@ -40,12 +40,24 @@ def check_market_numbers(text: str, as_of: Optional[str] = None) -> dict:
 
 
 @mcp.tool()
+def check_stock_closes(text: str, as_of: Optional[str] = None) -> dict:
+    """'삼성전자(005930) … 종가 214,500원'처럼 적힌 종목 종가를 한국거래소(KRX) 공식 종가와 대조한다.
+
+    등락률은 보지 않는다. KRX_API_KEY 가 필요하고, KRX Open API 약관상 비상업 목적에만 쓸 수 있다.
+    as_of 는 글을 쓴 날(YYYY-MM-DD). 없으면 본문의 '**작성**: 날짜' 줄, 그것도 없으면 오늘.
+    """
+    ref = dt.date.fromisoformat(as_of) if as_of else market.written_date(text)
+    return krx.check(text, ref)
+
+
+@mcp.tool()
 def check_all(text: str, as_of: Optional[str] = None) -> dict:
-    """위 세 검사를 한 번에 돌린다. 하나가 실패해도 나머지 결과는 돌려준다."""
+    """위 검사를 한 번에 돌린다. 하나가 실패해도 나머지 결과는 돌려준다."""
     out = {}
     for name, fn in (("unit_errors", lambda: check_unit_errors(text)),
                      ("ratio_direction", lambda: check_ratio_direction(text)),
-                     ("market_numbers", lambda: check_market_numbers(text, as_of))):
+                     ("market_numbers", lambda: check_market_numbers(text, as_of)),
+                     ("stock_closes", lambda: check_stock_closes(text, as_of))):
         try:
             out[name] = fn()
         except Exception as e:  # noqa: BLE001 — 한 검사의 실패가 다른 검사 결과를 지우지 않게

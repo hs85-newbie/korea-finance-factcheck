@@ -22,7 +22,9 @@
 
 `check_market_numbers`는 미국 국채 2·5·10·30년물 금리를 재무부 자료와, 코스피 종가와 한국 기준금리와 원·달러 환율을 한국은행 ECOS와 비교합니다. 글 끝에 `**작성**: 2026-10-30` 같은 줄이 있으면 그날을 기준으로 봅니다. 환율은 기사에 흔히 쓰는 주간 종가와 ECOS의 매매기준율이 원래 다른 숫자라서 15원 넘게 차이 날 때만 알립니다.
 
-`check_all`은 셋을 한꺼번에 돌립니다. 하나가 실패해도 나머지 결과는 그대로 돌려줍니다.
+`check_stock_closes`는 "삼성전자(005930)"처럼 종목코드가 나온 종목의 종가를 한국거래소(KRX) 공식 종가와 대조합니다. 같은 문장에 '종가'나 '마감'이 있는 원 단위 숫자만 봅니다. 목표주가 같은 숫자까지 종가로 읽지 않으려고 그렇게 했습니다. 등락률은 보지 않습니다. '9월 30일 이후 18.8% 하락' 같은 기간 수익률을 하루 등락으로 잘못 읽은 적이 있어서입니다. 숫자 앞에 날짜가 없으면 최근 거래일 가운데 하루와 맞으면 통과시킵니다.
+
+`check_all`은 이 검사를 한꺼번에 돌립니다. 하나가 실패해도 나머지 결과는 그대로 돌려줍니다.
 
 검사를 하지 못했을 때도 조용히 넘어가지 않습니다. 키가 없거나 조회가 실패하면 `skipped`에 이유를 적습니다.
 
@@ -32,7 +34,7 @@
 
 ```bash
 claude mcp add korea-finance-factcheck \
-  -e DART_API_KEY=발급받은_키 -e ECOS_API_KEY=발급받은_키 \
+  -e DART_API_KEY=발급받은_키 -e ECOS_API_KEY=발급받은_키 -e KRX_API_KEY=발급받은_키 \
   -- uvx korea-finance-factcheck
 ```
 
@@ -44,7 +46,7 @@ Claude Desktop에서는 설정 파일(`claude_desktop_config.json`)에 아래를
     "korea-finance-factcheck": {
       "command": "uvx",
       "args": ["korea-finance-factcheck"],
-      "env": { "DART_API_KEY": "발급받은_키", "ECOS_API_KEY": "발급받은_키" }
+      "env": { "DART_API_KEY": "발급받은_키", "ECOS_API_KEY": "발급받은_키", "KRX_API_KEY": "발급받은_키" }
     }
   }
 }
@@ -52,11 +54,13 @@ Claude Desktop에서는 설정 파일(`claude_desktop_config.json`)에 아래를
 
 ## 키 발급
 
-키는 직접 발급받아 넣습니다. 두 기관 약관상 인증키는 남과 나눠 쓸 수 없어서 이 서버는 누구의 키도 대신 맡아 두지 않습니다.
+키는 직접 발급받아 넣습니다. 세 기관 약관상 인증키는 남과 나눠 쓸 수 없어서 이 서버는 누구의 키도 대신 맡아 두지 않습니다.
 
 DART 키는 [OpenDART](https://opendart.fss.or.kr)에서 회원가입 뒤 인증키 신청 메뉴에서 받습니다. 비율 검사와 단위 검사에 씁니다.
 
 ECOS 키는 [한국은행 ECOS](https://ecos.bok.or.kr/api/)에서 받습니다. 신청할 때 이용 형태를 고르게 되어 있으니 쓰임에 맞게 고르세요. 코스피와 기준금리, 환율 검사에 씁니다. 미국 국채 금리는 키 없이 볼 수 있습니다.
+
+KRX 키는 [KRX Open API](https://openapi.krx.co.kr)에서 받고, 유가증권·코스닥 일별매매정보 이용 신청을 해 두어야 합니다. 종가 검사에 씁니다. KRX Open API 약관은 비상업 목적으로만 쓰도록 하고 있어서 돈을 받는 서비스에 이 검사를 넣으면 안 됩니다. 결과를 옮길 때는 'KRX 통계정보'라고 밝혀 주세요.
 
 ## 쓰는 예
 
@@ -81,11 +85,11 @@ Claude에게 글을 붙여 넣고 이렇게 말하면 됩니다.
 
 공시나 공식 통계에 없는 숫자는 판정하지 못합니다. 증권사 추정치, 장중 시세, 기사에만 나온 숫자가 그렇습니다. 이런 숫자는 `unverified`로 돌려주니 사람이 확인해 주세요.
 
-한국거래소(KRX) 시세와 네이버 데이터는 넣지 않았습니다. 두 곳 약관을 더 확인한 뒤에 다룰 생각입니다.
+네이버 데이터는 넣지 않았습니다. 약관상 쓸 수 있는 범위가 좁아서입니다.
 
 ## 출처
 
-이 서버가 불러오는 자료의 저작권은 각 기관에 있습니다. 공시는 금융감독원 전자공시시스템(DART), 국내 지표는 한국은행 경제통계시스템(ECOS), 미국 국채 금리는 미국 재무부(U.S. Department of the Treasury)의 자료입니다. 결과를 글에 옮길 때는 출처를 함께 적어 주세요.
+이 서버가 불러오는 자료의 저작권은 각 기관에 있습니다. 공시는 금융감독원 전자공시시스템(DART), 국내 지표는 한국은행 경제통계시스템(ECOS), 미국 국채 금리는 미국 재무부(U.S. Department of the Treasury), 종목 종가는 한국거래소(KRX 통계정보)의 자료입니다. 결과를 글에 옮길 때는 출처를 함께 적어 주세요.
 
 ## 개발
 
@@ -98,7 +102,7 @@ uv venv && uv pip install -e ".[test]"
 
 ## English
 
-An MCP server that checks numbers in Korean finance writing against official sources: DART filings (merger and share-exchange ratio direction, 10x/100x unit errors in revenue and profit), Bank of Korea ECOS (KOSPI close, base rate, KRW/USD) and US Treasury par yields. Bring your own `DART_API_KEY` and `ECOS_API_KEY`. It reports mismatches and never gives investment advice.
+An MCP server that checks numbers in Korean finance writing against official sources: DART filings (merger and share-exchange ratio direction, 10x/100x unit errors in revenue and profit), Bank of Korea ECOS (KOSPI close, base rate, KRW/USD), US Treasury par yields and KRX official stock closes (non-commercial use per KRX Open API terms). Bring your own `DART_API_KEY`, `ECOS_API_KEY` and `KRX_API_KEY`. It reports mismatches and never gives investment advice.
 
 ## 라이선스
 
