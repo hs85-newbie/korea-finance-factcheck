@@ -6,9 +6,9 @@ from typing import Optional
 
 from mcp.server.mcpserver import MCPServer
 
-from . import market, ratio, units
+from . import __version__, market, ratio, units
 
-mcp = MCPServer("korea-finance-factcheck")
+mcp = MCPServer("korea-finance-factcheck", version=__version__)
 
 
 @mcp.tool()
